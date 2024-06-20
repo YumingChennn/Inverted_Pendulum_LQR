@@ -1,0 +1,105 @@
+<mujoco model="Humanoid">
+
+    <compiler inertiafromgeom="true" angle="degree"/>
+
+    <default>
+        <joint limited="true" damping="1" armature="0"/>
+        <geom condim="1" material="matgeom"/>
+    </default>
+
+    <option timestep="0.005" iterations="50" tolerance="1e-10" solver="Newton" jacobian="dense" cone="pyramidal" gravity="0 0 -9.81"/>
+
+    <size nconmax="50" njmax="200" nstack="10000"/>
+
+    <visual>
+        <map force="0.1" zfar="30"/>
+        <rgba haze="0.15 0.25 0.35 1"/>
+        <quality shadowsize="2048"/>
+        <global offwidth="800" offheight="800"/>
+    </visual>
+
+    <asset>
+        <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="512"/>
+        <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2" width="512" height="512" mark="cross" markrgb=".8 .8 .8"/>
+        <texture name="texgeom" type="cube" builtin="flat" mark="cross" width="127" height="1278" rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" markrgb="1 1 1" random="0.01"/>
+        <material name="matplane" reflectance="0.3" texture="texplane" texrepeat="1 1" texuniform="true"/>
+        <material name="matgeom" texture="texgeom" texuniform="true" rgba="0.8 0.6 .4 1"/>
+        <mesh name="base_link" file="base_link.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="upperleg_right_1" file="upperleg_right_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="upperleg_left_1" file="upperleg_left_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="wheel_right_1" file="wheel_right_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="wheel_left_1" file="wheel_left_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="lowerleg_right_1" file="lowerleg_right_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="lowerleg_left_1" file="lowerleg_left_1.stl" scale="0.001 0.001 0.001"/>
+    </asset>
+
+    <worldbody>
+        <geom name="floor" pos="0 0 -0.285" size="0 0 .25" type="plane" material="matplane" condim="3" contype="1" conaffinity="1"/>
+        <light directional="false" diffuse=".2 .2 .2" specular="0 0 0" pos="0 0 5" dir="0 0 -1" castshadow="false"/>
+        <light mode="targetbodycom" target="robot" directional="false" diffuse=".8 .8 .8" specular="0.3 0.3 0.3" pos="0 0 4.0" dir="0 0 -1"/>
+
+        <body name="robot" pos="0 0 -0.1">
+            <joint type="free"/>
+            <body name="base_link" pos="0 0 0">
+                <inertial pos="0.00300424 0.0206516 -0.0103763" quat="0.00402797 0.727055 -0.0140978 0.686423" mass="0.453764" diaginertia="0.000951718 0.000826025 0.000742257"/>
+                
+                <geom type="mesh" contype="1" conaffinity="1" group="1" mesh="base_link"/>
+                <geom type="mesh" mesh="base_link"/>
+                <site name="imu_site" pos="0 0 0"/>
+
+                <body name="upperleg_right_1" pos="0.0125 -0.036656 -0.018805" quat="0.793657 0 0.608366 0">
+                    <inertial pos="0.000384889 -0.0301356 -0.022778" quat="0.993878 0.109614 0.00866327 -0.0107922" mass="0.0717161" diaginertia="8.80196e-05 7.86773e-05 2.23031e-05"/>
+                    <joint name="hip_joint_right" pos="0 0 0" axis="0 -1 0" range="-1 1"/>
+                    <geom pos="-0.0125 0.036656 0.018805" type="mesh" contype="1" conaffinity="1" group="1" mesh="upperleg_right_1"/>
+                    <geom pos="-0.0125 0.036656 0.018805" type="mesh" mesh="upperleg_right_1"/>
+                    <body name="lowerleg_right_1" pos="0 -0.0211 -0.12" quat="0.57393 0 -0.818905 0">
+                        <inertial pos="0.000147576 0.0163926 -0.0779098" quat="0.996559 0.073541 0.00782051 -0.0374159" mass="0.0680079" diaginertia="0.000109021 0.000107072 1.09068e-05"/>
+                        <joint name="knee_joint_right" pos="0 0 0" axis="0 -1 0" range="-1 1"/>
+                        <geom pos="-0.0125 0.057756 0.138805" type="mesh" contype="1" conaffinity="1" group="1" mesh="lowerleg_right_1"/>
+                        <geom pos="-0.0125 0.057756 0.138805" type="mesh" mesh="lowerleg_right_1"/>
+                        <body name="wheel_right_1" pos="0 0.0037 -0.11">
+                            <inertial pos="-1.36492e-10 -0.0138548 1.53838e-07" quat="0.707107 0 0 0.707107" mass="0.01" diaginertia="0.00014 7.5e-05 7.5e-05"/>
+                            <joint name="wheel_joint_right" pos="0 0 0" axis="0 -1 0" range="-180 180" type="hinge"/>
+                            <geom pos="-0.0125 0.054056 0.248805" type="mesh" contype="1" conaffinity="1" group="1" mesh="wheel_right_1"/>
+                            <geom pos="-0.0125 0.054056 0.248805" type="mesh" mesh="wheel_right_1"/>
+                        </body>
+                    </body>
+                </body>
+                <body name="upperleg_left_1" pos="0.012 0.077944 -0.018805" quat="0.793657 0 0.608366 0">
+                    <inertial pos="0.000398262 0.0301358 -0.022778" quat="0.993878 -0.109614 0.00866327 0.0107922" mass="0.0717161" diaginertia="8.80196e-05 7.86773e-05 2.23031e-05"/>
+                    <joint name="hip_joint_left" pos="0 0 0" axis="0 1 0" range="-1 1"/>
+                    <geom pos="-0.012 -0.077944 0.018805" type="mesh" contype="1" conaffinity="1" group="1" mesh="upperleg_left_1"/>
+                    <geom pos="-0.012 -0.077944 0.018805" type="mesh" mesh="upperleg_left_1"/>
+                    <body name="lowerleg_left_1" pos="0 0.0211 -0.12" quat="0.57393 0 -0.818905 0">
+                        <inertial pos="0.000161673 -0.0163924 -0.0779099" quat="0.996559 -0.073541 0.00782051 0.0374159" mass="0.0680078" diaginertia="0.000109021 0.000107072 1.09068e-05"/>
+                        <joint name="knee_joint_left" pos="0 0 0" axis="0 1 0" range="-1 1"/>
+                        <geom pos="-0.012 -0.099044 0.138805" type="mesh" contype="1" conaffinity="1" group="1" mesh="lowerleg_left_1"/>
+                        <geom pos="-0.012 -0.099044 0.138805" type="mesh" mesh="lowerleg_left_1"/>
+                        <body name="wheel_left_1" pos="0 -0.0037 -0.11">
+                            <inertial pos="-1.95094e-09 0.013855 1.52529e-07" quat="0.707107 0 0 0.707107" mass="0.01" diaginertia="0.00014 7.5e-05 7.5e-05"/>
+                            <joint name="wheel_joint_left" pos="0 0 0" axis="0 1 0" range="-180 180" type="hinge"/>
+                            <geom pos="-0.012 -0.095344 0.248805" type="mesh" contype="1" conaffinity="1" group="1" mesh="wheel_left_1"/>
+                            <geom pos="-0.012 -0.095344 0.248805" type="mesh" mesh="wheel_left_1"/>
+                        </body>
+                    </body>
+                </body>
+            </body>
+        </body>
+    </worldbody>
+
+    <actuator>
+        <motor name="wheel_right_torque" joint="wheel_joint_right" gear="20" ctrlrange="-1 1" ctrllimited="true"/>
+        <motor name="wheel_left_torque" joint="wheel_joint_left" gear="20" ctrlrange="-1 1" ctrllimited="true"/>
+        <motor joint="hip_joint_right" ctrlrange="-1 1" ctrllimited="true"/>
+        <motor joint="knee_joint_right" ctrlrange="-1 1" ctrllimited="true"/>
+        <motor joint="hip_joint_left" ctrlrange="-1 1" ctrllimited="true"/>
+        <motor joint="knee_joint_left" ctrlrange="-1 1" ctrllimited="true"/>
+    </actuator>
+
+    <sensor>
+        <!-- Add these sensors for the IMU -->
+        <gyro name="imu_gyro" site="imu_site"/>
+        <accelerometer name="imu_accel" site="imu_site"/>
+        <framepos name="sensor_global" objtype="body" objname="base_link"/>
+    </sensor>
+</mujoco>
